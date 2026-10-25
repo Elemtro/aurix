@@ -45,15 +45,15 @@ export default class extends Controller {
 
             this.stream.getTracks().forEach((track) => track.stop());
 
-            this.buttonTarget.textContent = '🎤 Nagraj ponownie';
+            this.buttonTarget.textContent = 'Nagraj ponownie';
             this.dotTarget.classList.remove('bg-red-500', 'animate-pulse');
             this.dotTarget.classList.add('bg-emerald-400');
             this.statusTarget.textContent = 'Nagranie gotowe (lokalnie)';
         };
 
         this.recorder.start();
-        this.buttonTarget.textContent = '⏹ Zatrzymaj nagrywanie';
-        this.dotTarget.classList.remove('bg-slate-500', 'bg-emerald-400');
+        this.buttonTarget.textContent = 'Zatrzymaj nagrywanie';
+        this.dotTarget.classList.remove('bg-neutral-600', 'bg-emerald-400');
         this.dotTarget.classList.add('bg-red-500', 'animate-pulse');
         this.statusTarget.textContent = 'Nagrywanie…';
     }
