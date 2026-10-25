@@ -1,0 +1,13 @@
+services:
+  web:
+    ports:
+      - "${NGINX_HOST_PORT:-8000}:80"
+
+  db:
+    ports:
+      - "${DB_HOST_PORT:-3307}:3306"
+
+  mailer:
+    ports:
+      - "8025:8025"
+      - "1025:1025"

@@ -1,0 +1,9 @@
+.git
+.idea
+.vscode
+symfony_app/var/
+symfony_app/vendor/
+symfony_app/node_modules/
+symfony_app/.env.local
+symfony_app/.env.*.local
+*.log

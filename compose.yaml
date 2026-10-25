@@ -1,0 +1,78 @@
+services:
+  web:
+    image: nginx:1.29-alpine
+    container_name: aurix-web
+    volumes:
+      - ./symfony_app/public:/var/www/aurix/public:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+    networks:
+      - aurix-net
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev
+    container_name: aurix-php
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ./symfony_app:/var/www/aurix
+    environment:
+      DATABASE_URL: "mysql://aurix:aurix@db:3306/aurix?serverVersion=11.4.3-MariaDB&charset=utf8mb4"
+      MAILER_DSN: "smtp://mailer:1025"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - aurix-net
+
+  db:
+    image: mariadb:11.4
+    container_name: aurix-db
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: aurix
+      MARIADB_USER: aurix
+      MARIADB_PASSWORD: aurix
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - aurix-net
+
+  mailer:
+    image: axllent/mailpit
+    container_name: aurix-mailer
+    networks:
+      - aurix-net
+
+  # ── Phase 2: Python backend (not implemented yet)
+  # Starts only with: docker compose --profile ml up -d
+  #
+  # ml:
+  #   profiles: ["ml"]
+  #   build:
+  #     context: ../aurix-ml
+  #   container_name: aurix-ml
+  #   healthcheck:
+  #     test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
+  #   networks:
+  #     - aurix-net
+
+networks:
+  aurix-net:
+    name: aurix-net
+
+volumes:
+  db_data:

@@ -1,0 +1,10 @@
+# IDE
+/.idea/
+/.vscode/
+*.iml
+
+# Agent instructions (lokalne, nie commitujemy)
+AGENTS.md
+
+# OS
+.DS_Store
