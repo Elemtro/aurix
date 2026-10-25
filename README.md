@@ -13,6 +13,7 @@ Weryfikacja głosu jako dodatkowa warstwa zabezpieczeń — aplikacja webowa (Sy
 | Symfony | **8.1** |
 | Baza danych | MariaDB 11.4 |
 | Serwer | nginx 1.29 + PHP-FPM |
+| Frontend | Stimulus 3 + Tailwind CSS 4 (AssetMapper) |
 | Docker Compose | tak |
 
 ## Struktura (warstwowa)
@@ -62,6 +63,24 @@ Zatrzymanie:
 ```bash
 docker compose down          # zachowuje dane
 docker compose down -v       # usuwa też wolumen bazy
+```
+
+## Frontend
+
+- **Stimulus** — kontrolery JS w `assets/controllers/` (np. `recorder_controller.js`).
+- **Tailwind CSS 4** — przez `symfonycasts/tailwind-bundle` (AssetMapper, bez Node).
+- Nie piszemy własnego CSS — wyłącznie utility classes Tailwinda.
+
+Build CSS:
+
+```bash
+docker compose exec php php bin/console tailwind:build
+```
+
+Tryb watch (przebudowa przy zmianach):
+
+```bash
+docker compose exec php php bin/console tailwind:build --watch
 ```
 
 ## Architektura integracji (Faza 2)
