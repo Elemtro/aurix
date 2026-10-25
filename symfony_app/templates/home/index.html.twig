@@ -56,11 +56,18 @@
                     </div>
                 </section>
 
-                <section id="demo" class="border-t border-[#2a2828] px-6 py-12 sm:px-10" data-controller="recorder">
+                <section
+                    id="demo"
+                    class="border-t border-[#2a2828] px-6 py-12 sm:px-10"
+                    data-controller="recorder"
+                    data-recorder-challenge-url-value="{{ path('api_challenge') }}"
+                    data-recorder-verify-url-value="{{ path('api_verify') }}"
+                    data-recorder-csrf-token-value="{{ csrf_token('aurix') }}"
+                >
                     <h2 class="mb-3 text-base font-bold text-[#efefef]">Demo</h2>
                     <p class="mb-4 max-w-2xl leading-8">
-                        Nagranie zostaje w przeglądarce. Docelowo po nagraniu system
-                        wytnie fragment mowy, sprawdzi żywotność i porówna głos z profilem.
+                        Wypowiedz wylosowaną frazę. Po nagraniu system sprawdzi żywotność
+                        i podobieństwo głosu do zapisanego profilu.
                     </p>
 
                     <p class="mb-8 text-sm text-[#7d7b7b]">
@@ -70,27 +77,72 @@
                         Wynik
                     </p>
 
-                    <div class="max-w-2xl rounded-lg border border-[#2a2828] bg-[#181819] p-5">
-                        <div class="mb-5 flex items-center gap-2.5 text-sm text-[#7d7b7b]">
-                            <span data-recorder-target="dot" class="h-2 w-2 rounded-full bg-neutral-600"></span>
-                            <span data-recorder-target="status">Gotowy do nagrania</span>
+                    <div class="max-w-2xl overflow-hidden rounded-lg border border-[#2a2828] bg-[#181819]">
+                        <div class="border-b border-[#2a2828] px-5 py-4">
+                            <p class="text-xs text-[#7d7b7b]">Wypowiedz frazę</p>
+                            <p data-recorder-target="phrase" class="mt-2 text-2xl font-bold tracking-tight text-[#efefef]">—</p>
+                            <p class="mt-1 text-xs text-[#7d7b7b]">
+                                pozostało <span data-recorder-target="timer" class="text-[#b4b0b0]">--</span> s
+                            </p>
                         </div>
 
-                        <button
-                            type="button"
-                            data-action="recorder#toggle"
-                            data-recorder-target="button"
-                            class="rounded bg-[#4fb3a6] px-5 py-2.5 font-medium text-[#0b0b0c] transition hover:brightness-110 active:translate-y-px"
-                        >
-                            Nagraj próbkę
-                        </button>
+                        <div class="p-5">
+                            <div class="mb-4 flex items-center gap-2.5 text-sm text-[#7d7b7b]">
+                                <span data-recorder-target="dot" class="h-2 w-2 rounded-full bg-neutral-600"></span>
+                                <span data-recorder-target="status">Pobieranie frazy…</span>
+                            </div>
 
-                        <audio
-                            data-recorder-target="playback"
-                            controls
-                            hidden
-                            class="mt-5 w-full"
-                        ></audio>
+                            <div class="flex flex-wrap gap-3">
+                                <button
+                                    type="button"
+                                    data-action="recorder#toggle"
+                                    data-recorder-target="button"
+                                    disabled
+                                    class="rounded bg-[#4fb3a6] px-5 py-2.5 font-medium text-[#0b0b0c] transition hover:brightness-110 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                    Nagraj próbkę
+                                </button>
+
+                                <button
+                                    type="button"
+                                    data-action="recorder#refresh"
+                                    class="rounded border border-[#2a2828] px-5 py-2.5 font-medium text-[#efefef] transition hover:bg-[#121214]"
+                                >
+                                    Nowa fraza
+                                </button>
+                            </div>
+
+                            <audio
+                                data-recorder-target="playback"
+                                controls
+                                hidden
+                                class="mt-5 w-full"
+                            ></audio>
+
+                            <div
+                                data-recorder-target="result"
+                                class="mt-5 hidden rounded-md border border-[#2a2828] bg-[#121214] p-4"
+                            >
+                                <p data-recorder-target="verdict" class="text-sm font-semibold"></p>
+
+                                <dl class="mt-3 grid grid-cols-3 gap-3 text-xs text-[#7d7b7b]">
+                                    <div>
+                                        <dt>Similarity</dt>
+                                        <dd data-recorder-target="similarity" class="mt-1 text-base text-[#efefef]">—</dd>
+                                    </div>
+                                    <div>
+                                        <dt>PAD</dt>
+                                        <dd data-recorder-target="pad" class="mt-1 text-base text-[#efefef]">—</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Fraza</dt>
+                                        <dd data-recorder-target="phraseMatch" class="mt-1 text-base text-[#efefef]">—</dd>
+                                    </div>
+                                </dl>
+
+                                <p data-recorder-target="reason" class="mt-3 text-xs leading-6 text-[#7d7b7b]"></p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
