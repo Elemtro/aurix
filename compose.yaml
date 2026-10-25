@@ -54,21 +54,26 @@ services:
     networks:
       - aurix-net
 
-  # ── Phase 2: Python backend (not implemented yet)
+  # ── Phase 2: Python backend
   # Starts only with: docker compose --profile ml up -d
-  #
-  # ml:
-  #   profiles: ["ml"]
-  #   build:
-  #     context: ../aurix-ml
-  #   container_name: aurix-ml
-  #   healthcheck:
-  #     test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 10
-  #   networks:
-  #     - aurix-net
+  ml:
+    profiles: ["ml"]
+    build:
+      context: ../aurix-ml
+    environment:
+      WHISPER_MODEL: small
+      WHISPER_LANGUAGE: pl
+      WHISPER_CACHE: /models
+      INTERNAL_TOKEN: dev-token
+    volumes:
+      - ml_models:/models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - aurix-net
 
 networks:
   aurix-net:
@@ -76,3 +81,4 @@ networks:
 
 volumes:
   db_data:
+  ml_models:

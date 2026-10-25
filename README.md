@@ -95,7 +95,7 @@ przeglądarka → nginx → Symfony → HTTP (sieć wewnętrzna) → Python (Fas
 
 ### Compose profile
 
-Serwis `ml` jest przygotowany (zakomentowany) w `compose.yaml`:
+Serwis `ml` jest zdefiniowany w profilu `ml` i buduje się z sąsiedniego repo `../aurix-ml`:
 
 ```bash
 docker compose up -d                  # Faza 1 — bez Pythona
