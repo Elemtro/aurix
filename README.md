@@ -134,18 +134,3 @@ docker compose exec php php bin/console lint:container
 docker compose exec php php bin/console lint:twig templates/
 docker compose exec php php bin/console lint:yaml config/
 ```
-
-Testy dopiszemy razem z docelowymi endpointami.
-
-Lokalnie (bez Dockera, z hosta):
-
-```bash
-cd symfony_app
-php bin/console lint:container
-```
-
-## Uwagi
-
-- `FakeVoiceVerifier` zwraca **losowy** wynik — to celowe, żeby zbudować UI i flow bez modeli.
-- Docelowo audio z przeglądarki (webm/opus) trzeba konwertować do 16 kHz mono WAV (`ffmpeg`) po stronie Pythona.
-- Dokumentacja projektu: notatki w Obsidianie (`PBR - Architektura`, `PBR - MVP i plan realizacji`).
