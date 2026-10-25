@@ -18,6 +18,7 @@ export default class extends Controller {
         'similarity',
         'pad',
         'phraseMatch',
+        'compared',
         'reason',
     ];
 
@@ -32,6 +33,7 @@ export default class extends Controller {
         this.stream = null;
         this.chunks = [];
         this.challengeId = null;
+        this.currentPhrase = '';
         this.countdown = null;
 
         this.loadChallenge();
@@ -76,6 +78,7 @@ export default class extends Controller {
             }
 
             this.challengeId = data.id;
+            this.currentPhrase = data.phrase;
             this.phraseTarget.textContent = data.phrase;
             this.startCountdown(new Date(data.expiresAt));
 
@@ -190,6 +193,7 @@ export default class extends Controller {
         this.similarityTarget.textContent = Number(data.similarity).toFixed(2);
         this.padTarget.textContent = Number(data.padScore).toFixed(2);
         this.phraseMatchTarget.textContent = Number(data.phraseMatch).toFixed(2);
+        this.comparedTarget.textContent = this.currentPhrase || '\u2014';
 
         this.reasonTarget.textContent = data.reason
             || (data.stub ? 'Wynik ze stubu — silnik Python nie jest jeszcze podłączony.' : '');
@@ -202,6 +206,7 @@ export default class extends Controller {
         this.similarityTarget.textContent = '\u2014';
         this.padTarget.textContent = '\u2014';
         this.phraseMatchTarget.textContent = '\u2014';
+        this.comparedTarget.textContent = '\u2014';
         this.reasonTarget.textContent = '';
     }
 }
