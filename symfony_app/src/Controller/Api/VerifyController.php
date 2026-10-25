@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Voice\Challenge\ChallengeStore;
 use App\Voice\Engine\VoiceEngineInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +17,11 @@ use Symfony\Component\Routing\Attribute\Route;
 final class VerifyController extends AbstractController
 {
     private const MAX_AUDIO_BYTES = 32 * 1024 * 1024;
+
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    ) {
+    }
 
     public function __invoke(
         Request $request,
@@ -51,7 +57,16 @@ final class VerifyController extends AbstractController
             ], 413);
         }
 
-        $result = $engine->verify($audio->getPathname(), $challenge->phrase);
+        try {
+            $result = $engine->verify($audio->getPathname(), $challenge->phrase);
+        } catch (\Throwable $exception) {
+            $this->logger->error('Voice engine failed.', ['exception' => $exception]);
+
+            return $this->json([
+                'error' => 'engine_unavailable',
+                'message' => 'Silnik weryfikacji jest chwilowo niedostępny.',
+            ], 502);
+        }
 
         return $this->json([
             'accepted' => $result->accepted,

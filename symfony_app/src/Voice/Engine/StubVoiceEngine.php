@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace App\Voice\Engine;
 
-use Symfony\Component\DependencyInjection\Attribute\AsAlias;
-
 /**
  * Deterministic placeholder engine used until the Python service is ready.
  *
  * Scores are derived from the audio size so repeated runs with the same
  * recording are stable. This keeps the whole flow testable end to end.
  */
-#[AsAlias(VoiceEngineInterface::class)]
 final class StubVoiceEngine implements VoiceEngineInterface
 {
     private const SIMILARITY_THRESHOLD = 0.80;

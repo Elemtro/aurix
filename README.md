@@ -102,6 +102,20 @@ docker compose up -d                  # Faza 1 — bez Pythona
 docker compose --profile ml up -d     # Faza 2 — z Pythonem
 ```
 
+### Silnik weryfikacji
+
+| `VOICE_ENGINE` | Zachowanie |
+|---|---|
+| `stub` (domyślnie) | deterministyczna atrapa, bez Pythona |
+| `http` | wewnętrzny serwis Python (`http://ml:8000`) |
+
+Test z prawdziwym silnikiem:
+
+```bash
+VOICE_ENGINE=http docker compose --profile ml up -d
+docker compose restart web   # nginx musi przemapować IP php po recreate
+```
+
 ## API (planowane)
 
 Endpointy powstaną w kolejnym kroku, gdy frontend będzie ustalony:

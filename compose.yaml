@@ -22,6 +22,9 @@ services:
     environment:
       DATABASE_URL: "mysql://aurix:aurix@db:3306/aurix?serverVersion=11.4.3-MariaDB&charset=utf8mb4"
       MAILER_DSN: "smtp://mailer:1025"
+      VOICE_ENGINE: "${VOICE_ENGINE:-stub}"
+      VOICE_ML_URL: "http://ml:8000"
+      VOICE_ML_TOKEN: "${VOICE_ML_TOKEN:-dev-token}"
     depends_on:
       db:
         condition: service_healthy
@@ -61,12 +64,13 @@ services:
     build:
       context: ../aurix-ml
     environment:
-      WHISPER_MODEL: small
-      WHISPER_LANGUAGE: pl
+      WHISPER_MODEL: "${WHISPER_MODEL:-small}"
+      WHISPER_LANGUAGE: "${WHISPER_LANGUAGE:-pl}"
       WHISPER_CACHE: /models
-      INTERNAL_TOKEN: dev-token
+      INTERNAL_TOKEN: "${VOICE_ML_TOKEN:-dev-token}"
     volumes:
       - ml_models:/models
+      - ../aurix-ml/app:/app/app
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
