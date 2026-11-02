@@ -2,8 +2,8 @@
 
 Weryfikacja głosu jako dodatkowa warstwa zabezpieczeń — aplikacja webowa (Symfony).
 
-> **Status:** Faza 1 — aplikacja webowa (bez podłączenia silnika weryfikacji).
-> Backend Python (modele ECAPA-TDNN + AASIST) dołączy w Fazie 2.
+> **Status:** Faza 1 — przepływ weryfikacji działa (stub lub wewnętrzny serwis Python).
+> Modele mówcy (ECAPA-TDNN) i PAD (AASIST) są rozwijane w `aurix-ml`.
 
 ## Stack
 
@@ -20,7 +20,7 @@ Weryfikacja głosu jako dodatkowa warstwa zabezpieczeń — aplikacja webowa (Sy
 
 ```
 aurix/
-├── compose.yaml              # orkiestracja: web + php + db + mailer
+├── compose.yaml              # orkiestracja: web + php + db
 ├── compose.override.yaml     # porty dev
 ├── .env                      # zmienne compose (porty, token)
 ├── .dockerignore
@@ -53,9 +53,11 @@ docker compose exec php composer install
 # 3. Migracje
 docker compose exec php php bin/console doctrine:migrations:migrate --no-interaction
 
-# 4. Otwórz
+# 4. Budowanie tailwinda
+docker compose exec php bin/console tailwind:build
+
+# 5. Otwórz
 #    http://localhost:8000
-#    Mailpit: http://localhost:8025
 ```
 
 Zatrzymanie:
@@ -116,16 +118,14 @@ VOICE_ENGINE=http docker compose --profile ml up -d
 docker compose restart web   # nginx musi przemapować IP php po recreate
 ```
 
-## API (planowane)
-
-Endpointy powstaną w kolejnym kroku, gdy frontend będzie ustalony:
+## API
 
 | Metoda | Endpoint | Opis |
 |---|---|---|
-| `POST` | `/api/enroll` | rejestracja profilu głosowego |
-| `POST` | `/api/verify` | weryfikacja próbki głosu |
+| `POST` | `/api/challenge` | losowa fraza + ID (sesja, TTL 120 s) |
+| `POST` | `/api/verify` | audio + `challengeId` → wynik |
 
-Pole pliku: `audio` (multipart/form-data).
+Pole pliku: `audio` (multipart/form-data). Endpointy wymagają nagłówka `X-CSRF-Token`.
 
 ## Lint i testy
 

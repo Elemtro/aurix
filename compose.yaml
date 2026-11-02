@@ -21,7 +21,6 @@ services:
       - ./symfony_app:/var/www/aurix
     environment:
       DATABASE_URL: "mysql://aurix:aurix@db:3306/aurix?serverVersion=11.4.3-MariaDB&charset=utf8mb4"
-      MAILER_DSN: "smtp://mailer:1025"
       VOICE_ENGINE: "${VOICE_ENGINE:-stub}"
       VOICE_ML_URL: "http://ml:8000"
       VOICE_ML_TOKEN: "${VOICE_ML_TOKEN:-dev-token}"
@@ -48,12 +47,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
-    networks:
-      - aurix-net
-
-  mailer:
-    image: axllent/mailpit
-    container_name: aurix-mailer
     networks:
       - aurix-net
 
