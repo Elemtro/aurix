@@ -170,10 +170,10 @@ docker compose exec php php bin/console tailwind:build --watch
 |---|---|---|
 | `POST` | `/api/enroll` | zapis próbki dla frazy (1–3) |
 | `POST` | `/api/login/voice` | weryfikacja głosu po haśle |
-| `POST` | `/api/challenge` | losowa fraza (przyszły tryb) |
-| `POST` | `/api/verify` | weryfikacja losowej frazy (przyszły tryb) |
 
 Pole pliku: `audio` (multipart/form-data). Endpointy wymagają `X-CSRF-Token`.
+
+`PhraseGenerator` i `WordList` zostają w kodzie pod przyszły tryb losowych fraz.
 
 ## Bezpieczeństwo i prywatność
 
