@@ -118,7 +118,17 @@ final class HttpVoiceEngine implements VoiceEngineInterface
         );
 
         if ($response->getStatusCode() >= 400) {
-            throw new \RuntimeException(sprintf('Voice engine returned HTTP %d.', $response->getStatusCode()));
+            $status = $response->getStatusCode();
+
+            try {
+                $data = $response->toArray(false);
+            } catch (\Throwable) {
+                $data = [];
+            }
+
+            $detail = (string) ($data['detail'] ?? $data['message'] ?? sprintf('Voice engine returned HTTP %d.', $status));
+
+            throw new VoiceEngineException($detail, $status);
         }
 
         return $response->toArray();

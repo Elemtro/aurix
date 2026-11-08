@@ -7,7 +7,9 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\VoiceSampleRepository;
 use App\Security\TemplateCipher;
+use App\Voice\Engine\VoiceEngineException;
 use App\Voice\Engine\VoiceEngineInterface;
+use App\Voice\VoiceErrorTranslator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -23,6 +25,7 @@ final class VoiceLoginController extends AbstractController
 
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly VoiceErrorTranslator $errors,
     ) {
     }
 
@@ -114,6 +117,14 @@ final class VoiceLoginController extends AbstractController
         try {
             file_put_contents($referencePath, $cipher->decrypt($sample->getAudioCiphertext()));
             $result = $engine->verify($audio->getPathname(), $sample->getPhrase(), $referencePath);
+        } catch (VoiceEngineException $exception) {
+            $this->logger->error('Voice login failed.', ['exception' => $exception]);
+            $status = $exception->statusCode >= 400 && $exception->statusCode < 500 ? $exception->statusCode : 502;
+
+            return $this->json([
+                'error' => 'engine_error',
+                'message' => 502 === $status ? 'Silnik weryfikacji jest chwilowo niedostępny.' : $this->errors->translate($exception->getMessage()),
+            ], $status);
         } catch (\Throwable $exception) {
             $this->logger->error('Voice login failed.', ['exception' => $exception]);
 

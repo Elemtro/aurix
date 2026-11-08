@@ -67,42 +67,90 @@ aurix/
     └── tests/
 ```
 
-## Szybki start
+## Wymagania
+
+- Docker + Docker Compose
+- Git
+- ok. 5 GB miejsca (obrazy + modele ML)
+- wolne porty `8000` i `3307` (można zmienić w `.env`)
+
+## Uruchomienie od zera
+
+Repozytoria muszą leżeć **obok siebie** (`aurix` i `aurix-ml`):
 
 ```bash
-# 1. Zbuduj i uruchom web + bazę
-docker compose up -d --build
-
-# 2. Zależności (jeśli budujesz od zera)
-docker compose exec php composer install
-
-# 3. Migracje
-docker compose exec php php bin/console doctrine:migrations:migrate --no-interaction
-
-# 4. Tailwind
-docker compose exec php php bin/console tailwind:build
-
-# 5. Otwórz
-#    http://localhost:8000
+mkdir -p ~/Code && cd ~/Code
+git clone git@github.com:Elemtro/aurix.git
+git clone git@github.com:Elemtro/aurix-ml.git
 ```
 
-### Z prawdziwym ML
+Web + baza:
 
-Wymaga sąsiedniego repo `../aurix-ml`.
+```bash
+cd ~/Code/aurix
+docker compose up -d --build
+docker compose exec php composer install
+docker compose exec php php bin/console doctrine:migrations:migrate --no-interaction
+docker compose exec php php bin/console tailwind:build
+```
+
+ML (do demo potrzebne):
 
 ```bash
 VOICE_ENGINE=http docker compose --profile ml up -d
-docker compose restart web   # nginx musi przemapować IP php po recreate
+docker compose restart web
 ```
 
-Pierwsze nagranie pobiera modele (Whisper, Silero, ECAPA, AASIST) do wolumenu `ml_models`.
-PAD jest diagnostyczny (`PAD_ENFORCED=false`) — nie blokuje logowania do czasu kalibracji.
+Otwórz `http://localhost:8000`.
+
+> Pierwsze nagranie pobiera modele (Whisper, Silero VAD, ECAPA, AASIST) do wolumenu `ml_models`.
+> Kolejne są szybkie. PAD jest diagnostyczny (`PAD_ENFORCED=false`).
 
 Zatrzymanie:
 
 ```bash
 docker compose --profile ml down      # zachowuje dane
-docker compose --profile ml down -v   # usuwa też wolumeny
+docker compose --profile ml down -v   # usuwa też wolumeny (baza + modele)
+```
+
+### Zmiana portów
+
+W `.env`:
+
+```dotenv
+NGINX_HOST_PORT=8000
+DB_HOST_PORT=3307
+```
+
+### Demo bez ML
+
+```bash
+docker compose up -d
+```
+
+Działa rejestracja, enrollment i logowanie, ale silnik jest atrapą (`stub`) — nie porównuje prawdziwego głosu.
+
+## Testowy przebieg (demo)
+
+1. `http://localhost:8000` → przekieruje na `/login`.
+2. **Zarejestruj nowe konto** (login, hasło, zgoda).
+3. Nagraj trzy frazy po kolei:
+   - `kawa most zima wiatr`
+   - `ryba okno las chmura`
+   - `torba lato droga gwiazda`
+4. Po trzeciej frazie zobaczysz panel użytkownika.
+5. **Wyloguj się**.
+6. Zaloguj się hasłem → pojawi się losowa fraza z trzech.
+7. Nagraj ją → panel pokaże `similarity`, `phraseMatch` i PAD (diagnostycznie).
+
+> Do każdego demo użyj **nowego loginu** (np. `demo1`, `demo2`). Stare konta zostają w bazie.
+
+## Szybki start (powrót do projektu)
+
+```bash
+cd ~/Code/aurix
+VOICE_ENGINE=http docker compose --profile ml up -d
+docker compose restart web
 ```
 
 ## Frontend

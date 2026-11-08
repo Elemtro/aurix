@@ -8,8 +8,10 @@ use App\Entity\User;
 use App\Entity\VoiceSample;
 use App\Repository\VoiceSampleRepository;
 use App\Security\TemplateCipher;
+use App\Voice\Engine\VoiceEngineException;
 use App\Voice\Engine\VoiceEngineInterface;
 use App\Voice\EnrollmentPhrases;
+use App\Voice\VoiceErrorTranslator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +27,7 @@ final class EnrollmentController extends AbstractController
 
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly VoiceErrorTranslator $errors,
     ) {
     }
 
@@ -98,6 +101,14 @@ final class EnrollmentController extends AbstractController
 
         try {
             $check = $engine->checkPhrase($audio->getPathname(), $phrase);
+        } catch (VoiceEngineException $exception) {
+            $this->logger->error('Enrollment phrase check failed.', ['exception' => $exception]);
+            $status = $exception->statusCode >= 400 && $exception->statusCode < 500 ? $exception->statusCode : 502;
+
+            return $this->json([
+                'error' => 'engine_error',
+                'message' => 502 === $status ? 'Silnik weryfikacji jest chwilowo niedostępny.' : $this->errors->translate($exception->getMessage()),
+            ], $status);
         } catch (\Throwable $exception) {
             $this->logger->error('Enrollment phrase check failed.', ['exception' => $exception]);
 
