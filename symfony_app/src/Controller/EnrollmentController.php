@@ -10,7 +10,7 @@ use App\Repository\VoiceSampleRepository;
 use App\Security\TemplateCipher;
 use App\Voice\Engine\VoiceEngineException;
 use App\Voice\Engine\VoiceEngineInterface;
-use App\Voice\EnrollmentPhrases;
+use App\Voice\EnrollmentPhraseProvider;
 use App\Voice\VoiceErrorTranslator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -28,6 +28,7 @@ final class EnrollmentController extends AbstractController
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly VoiceErrorTranslator $errors,
+        private readonly EnrollmentPhraseProvider $phraseProvider,
     ) {
     }
 
@@ -44,13 +45,15 @@ final class EnrollmentController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
+        $phrases = $this->phraseProvider->ensureForUser($user);
+
         $existing = [];
         foreach ($samples->findForUser($user) as $sample) {
             $existing[$sample->getPhraseIndex()] = true;
         }
 
         $nextIndex = 1;
-        foreach (EnrollmentPhrases::PHRASES as $index => $phrase) {
+        foreach ($phrases as $index => $phrase) {
             if (!isset($existing[$index])) {
                 $nextIndex = $index;
                 break;
@@ -58,7 +61,7 @@ final class EnrollmentController extends AbstractController
         }
 
         return $this->render('enrollment/index.html.twig', [
-            'phrases' => EnrollmentPhrases::PHRASES,
+            'phrases' => $phrases,
             'existing' => $existing,
             'nextIndex' => $nextIndex,
         ]);
@@ -82,13 +85,14 @@ final class EnrollmentController extends AbstractController
             return $this->json(['error' => 'invalid_csrf'], 403);
         }
 
+        $phrases = $this->phraseProvider->ensureForUser($user);
         $index = (int) $request->request->get('phraseIndex', 0);
 
-        if (!isset(EnrollmentPhrases::PHRASES[$index])) {
+        if (!isset($phrases[$index])) {
             return $this->json(['error' => 'invalid_phrase'], 422);
         }
 
-        $phrase = EnrollmentPhrases::PHRASES[$index];
+        $phrase = $phrases[$index];
         $audio = $request->files->get('audio');
 
         if (!$audio instanceof UploadedFile || !$audio->isValid()) {
@@ -150,7 +154,7 @@ final class EnrollmentController extends AbstractController
         }
 
         $nextIndex = null;
-        foreach (array_keys(EnrollmentPhrases::PHRASES) as $candidate) {
+        foreach (array_keys($phrases) as $candidate) {
             if (null === $samples->findOneByUserAndIndex($user, $candidate)) {
                 $nextIndex = $candidate;
                 break;
@@ -162,7 +166,7 @@ final class EnrollmentController extends AbstractController
             'phraseIndex' => $index,
             'phraseMatch' => $check->phraseMatch,
             'nextIndex' => $nextIndex,
-            'nextPhrase' => null === $nextIndex ? null : EnrollmentPhrases::PHRASES[$nextIndex],
+            'nextPhrase' => null === $nextIndex ? null : $phrases[$nextIndex],
             'completed' => $completed,
         ]);
     }

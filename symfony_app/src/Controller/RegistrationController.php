@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Voice\EnrollmentPhraseProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -16,6 +17,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class RegistrationController extends AbstractController
 {
+    public function __construct(
+        private readonly EnrollmentPhraseProvider $phraseProvider,
+    ) {
+    }
+
     #[Route('/register', name: 'app_register', methods: ['GET', 'POST'])]
     public function register(
         Request $request,
@@ -37,6 +43,7 @@ final class RegistrationController extends AbstractController
             );
 
             $entityManager->persist($user);
+            $this->phraseProvider->ensureForUser($user);
             $entityManager->flush();
 
             $security->login($user, 'form_login', 'main');

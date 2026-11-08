@@ -40,10 +40,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: VoiceSample::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $voiceSamples;
 
+    /** @var Collection<int, UserPhrase> */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPhrase::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $userPhrases;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->voiceSamples = new ArrayCollection();
+        $this->userPhrases = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,6 +140,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->voiceSamples->removeElement($voiceSample) && $voiceSample->getUser() === $this) {
             $voiceSample->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserPhrase>
+     */
+    public function getUserPhrases(): Collection
+    {
+        return $this->userPhrases;
+    }
+
+    public function addUserPhrase(UserPhrase $userPhrase): self
+    {
+        if (!$this->userPhrases->contains($userPhrase)) {
+            $this->userPhrases->add($userPhrase);
+            $userPhrase->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserPhrase(UserPhrase $userPhrase): self
+    {
+        if ($this->userPhrases->removeElement($userPhrase) && $userPhrase->getUser() === $this) {
+            $userPhrase->setUser(null);
         }
 
         return $this;

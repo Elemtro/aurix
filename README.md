@@ -34,11 +34,9 @@ Logowanie
   → panel użytkownika
 ```
 
-Frazy enrollmentu (stałe, wspólne dla kont):
-
-1. `kawa most zima wiatr`
-2. `ryba okno las chmura`
-3. `torba lato droga gwiazda`
+Frazy enrollmentu są **generowane per konto** przy rejestracji (3 słowa + 2 liczebniki),
+zapisywane w `UserPhrase`, a nagrania w `VoiceSample`. Przy logowaniu losowana jest
+jedna z trzech fraz użytkownika.
 
 ## Struktura
 
@@ -58,7 +56,7 @@ aurix/
     ├── public/               # manifest PWA, ikona
     ├── src/
     │   ├── Controller/       # auth, enrollment, voice login, API
-    │   ├── Entity/           # User, VoiceSample
+    │   ├── Entity/           # User, UserPhrase, VoiceSample
     │   ├── Form/             # RegistrationFormType
     │   ├── Repository/
     │   ├── Security/         # guard, szyfrowanie szablonów
@@ -134,10 +132,7 @@ Działa rejestracja, enrollment i logowanie, ale silnik jest atrapą (`stub`) �
 
 1. `http://localhost:8000` → przekieruje na `/login`.
 2. **Zarejestruj nowe konto** (login, hasło, zgoda).
-3. Nagraj trzy frazy po kolei:
-   - `kawa most zima wiatr`
-   - `ryba okno las chmura`
-   - `torba lato droga gwiazda`
+3. Nagraj trzy frazy wyświetlone na ekranie — są generowane dla Twojego konta.
 4. Po trzeciej frazie zobaczysz panel użytkownika.
 5. **Wyloguj się**.
 6. Zaloguj się hasłem → pojawi się losowa fraza z trzech.
@@ -173,7 +168,7 @@ docker compose exec php php bin/console tailwind:build --watch
 
 Pole pliku: `audio` (multipart/form-data). Endpointy wymagają `X-CSRF-Token`.
 
-`PhraseGenerator` i `WordList` zostają w kodzie pod przyszły tryb losowych fraz.
+`PhraseGenerator` i `WordList` generują trzy unikalne frazy przy rejestracji.
 
 ## Bezpieczeństwo i prywatność
 
