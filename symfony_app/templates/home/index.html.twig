@@ -1,176 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Aurix — weryfikacja głosu{% endblock %}
+{% block title %}Aurix{% endblock %}
 
 {% block body %}
-    <div class="min-h-screen bg-[#0b0b0c] font-mono text-[#b4b0b0] selection:bg-[#4fb3a6] selection:text-[#0b0b0c]">
-        <div class="mx-auto max-w-[67.5rem] px-4 py-6 sm:px-6">
-            <div class="overflow-hidden rounded-xl border border-[#2a2828] bg-[#121214]">
-
-                <header class="flex h-20 items-center justify-between border-b border-[#2a2828] px-6 sm:px-10">
-                    <a href="{{ path('home') }}" class="flex items-center gap-3 text-[#efefef]">
-                        <svg class="h-7 w-7 text-[#4fb3a6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-                            <path d="M3 12h2M7 8.5v7M11 5v14M15 9v6M19 10.5h2" />
-                        </svg>
-                        <span class="text-lg font-semibold tracking-tight">aurix</span>
-                    </a>
-
-                    {# Header navigation disabled for now; the hero already has a primary CTA.
-                    <nav class="hidden items-center gap-8 text-sm sm:flex">
-                        <a href="#demo" class="transition hover:text-[#efefef]">Demo</a>
-                        <a href="#demo" class="rounded bg-[#4fb3a6] px-4 py-2 font-medium text-[#0b0b0c] transition hover:brightness-110">Zacznij</a>
-                    </nav>
-
-                    <a href="#demo" class="rounded border border-[#2a2828] px-3 py-2 text-sm text-[#efefef] sm:hidden">Start</a>
-                    #}
-                </header>
-
-                <section class="grid gap-10 px-6 py-16 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-20">
-                    <div>
-                        <p class="mb-4 flex items-center gap-3 text-sm text-[#7d7b7b]">
-                            <span class="h-1.5 w-1.5 rounded-full bg-[#4fb3a6]"></span>
-                            Prototyp · Faza 1
-                        </p>
-
-                        <h1 class="mb-3 max-w-2xl text-[38px] font-bold leading-tight text-[#efefef]">
-                            Weryfikacja głosu jako druga warstwa zabezpieczeń
-                        </h1>
-
-                        <p class="mb-8 max-w-xl leading-8">
-                            Aurix potwierdza tożsamość na podstawie unikalnych cech głosu.
-                            Działa jako dodatkowy czynnik — obok hasła i urządzenia — w bankach,
-                            sklepach internetowych i systemach płatności.
-                        </p>
-
-                        <a href="#demo" class="inline-block rounded bg-[#4fb3a6] px-5 py-2.5 font-medium text-[#0b0b0c] transition hover:brightness-110">
-                            Zacznij weryfikację
-                        </a>
-                    </div>
-
-                    <div class="rounded-lg border border-[#2a2828] bg-[#181819]">
-                        <div class="border-b border-[#2a2828] px-5 py-3 text-xs text-[#7d7b7b]">przykładowy przebieg</div>
-                        <div class="px-5 py-4 text-sm leading-7">
-                            <p><span class="text-[#7d7b7b]">$</span> <span class="text-[#efefef]">aurix verify --audio sample.wav</span></p>
-                            <p><span class="text-[#7d7b7b]">[1/2]</span> detekcja deepfake <span class="text-[#7d7b7b]">.........</span> <span class="text-[#4fb3a6]">bona fide</span></p>
-                            <p><span class="text-[#7d7b7b]">[2/2]</span> weryfikacja mówcy <span class="text-[#7d7b7b]">....</span> <span class="text-[#4fb3a6]">match</span></p>
-                            <p class="mt-3 text-[#7d7b7b]">similarity 0.92 · próg 0.80</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section
-                    id="demo"
-                    class="border-t border-[#2a2828] px-6 py-12 sm:px-10"
-                    data-controller="recorder"
-                    data-recorder-challenge-url-value="{{ path('api_challenge') }}"
-                    data-recorder-verify-url-value="{{ path('api_verify') }}"
-                    data-recorder-csrf-token-value="{{ csrf_token('aurix') }}"
-                >
-                    <h2 class="mb-3 text-base font-bold text-[#efefef]">Demo</h2>
-                    <p class="mb-4 max-w-2xl leading-8">
-                        Wypowiedz wylosowaną frazę. Po nagraniu system sprawdzi żywotność
-                        i podobieństwo głosu do zapisanego profilu.
-                    </p>
-
-                    <p class="mb-8 text-sm text-[#7d7b7b]">
-                        Fraza <span class="mx-2 text-[#464444]">→</span>
-                        Nagranie <span class="mx-2 text-[#464444]">→</span>
-                        Analiza <span class="mx-2 text-[#464444]">→</span>
-                        Wynik
-                    </p>
-
-                    <div class="max-w-2xl overflow-hidden rounded-lg border border-[#2a2828] bg-[#181819]">
-                        <div class="border-b border-[#2a2828] px-5 py-4">
-                            <p class="text-xs text-[#7d7b7b]">Wypowiedz frazę</p>
-                            <p data-recorder-target="phrase" class="mt-2 text-2xl font-bold tracking-tight text-[#efefef]">—</p>
-                            <p class="mt-1 text-xs text-[#7d7b7b]">
-                                pozostało <span data-recorder-target="timer" class="text-[#b4b0b0]">--</span> s
-                            </p>
-                        </div>
-
-                        <div class="p-5">
-                            <div class="mb-4 flex items-center gap-2.5 text-sm text-[#7d7b7b]">
-                                <span data-recorder-target="dot" class="h-2 w-2 rounded-full bg-neutral-600"></span>
-                                <span data-recorder-target="status">Pobieranie frazy…</span>
-                            </div>
-
-                            <div class="flex flex-wrap gap-3">
-                                <button
-                                    type="button"
-                                    data-action="recorder#toggle"
-                                    data-recorder-target="button"
-                                    disabled
-                                    class="rounded bg-[#4fb3a6] px-5 py-2.5 font-medium text-[#0b0b0c] transition hover:brightness-110 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40"
-                                >
-                                    Nagraj próbkę
-                                </button>
-
-                                <button
-                                    type="button"
-                                    data-action="recorder#refresh"
-                                    class="rounded border border-[#2a2828] px-5 py-2.5 font-medium text-[#efefef] transition hover:bg-[#121214]"
-                                >
-                                    Nowa fraza
-                                </button>
-                            </div>
-
-                            <audio
-                                data-recorder-target="playback"
-                                controls
-                                hidden
-                                class="mt-5 w-full"
-                            ></audio>
-
-                            <div
-                                data-recorder-target="result"
-                                class="mt-5 hidden rounded-md border border-[#2a2828] bg-[#121214] p-4"
-                            >
-                                <p data-recorder-target="verdict" class="text-sm font-semibold"></p>
-
-                                <dl class="mt-3 grid grid-cols-3 gap-3 text-xs text-[#7d7b7b]">
-                                    <div>
-                                        <dt>Similarity</dt>
-                                        <dd data-recorder-target="similarity" class="mt-1 text-base text-[#efefef]">—</dd>
-                                    </div>
-                                    <div>
-                                        <dt>PAD</dt>
-                                        <dd data-recorder-target="pad" class="mt-1 text-base text-[#efefef]">—</dd>
-                                    </div>
-                                    <div>
-                                        <dt>Fraza</dt>
-                                        <dd data-recorder-target="phraseMatch" class="mt-1 text-base text-[#efefef]">—</dd>
-                                    </div>
-                                </dl>
-
-                                <p class="mt-3 text-xs leading-6 text-[#7d7b7b]">
-                                    Porównano z frazą:
-                                    <span data-recorder-target="compared" class="text-[#b4b0b0]">—</span>
-                                </p>
-
-                                <p data-recorder-target="reason" class="mt-3 text-xs leading-6 text-[#7d7b7b]"></p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {# Footer links disabled for now.
-                <footer class="flex flex-col border-t border-[#2a2828] sm:flex-row">
-                    <div class="flex-1 border-b border-[#2a2828] text-center sm:border-b-0 sm:border-r">
-                        <a href="#" class="block px-4 py-8 text-sm transition hover:bg-[#181819] hover:text-[#efefef]">Dokumentacja</a>
-                    </div>
-                    <div class="flex-1 border-b border-[#2a2828] text-center sm:border-b-0 sm:border-r">
-                        <a href="#" class="block px-4 py-8 text-sm transition hover:bg-[#181819] hover:text-[#efefef]">Repozytorium</a>
-                    </div>
-                    <div class="flex-1 text-center">
-                        <a href="#" class="block px-4 py-8 text-sm transition hover:bg-[#181819] hover:text-[#efefef]">Kontakt</a>
-                    </div>
-                </footer>
-                #}
-
-                <div class="border-t border-[#2a2828] px-6 py-6 text-center text-xs text-[#7d7b7b] sm:px-10">
-                    Aurix · projekt badawczo-rozwojowy · UAM
+    <div class="mx-auto flex min-h-screen w-full max-w-xl flex-col px-4 py-6 sm:py-10">
+        <header class="mb-8 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <svg class="h-9 w-9 text-[#4fb3a6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                    <path d="M3 12h2M7 8.5v7M11 5v14M15 9v6M19 10.5h2" />
+                </svg>
+                <div>
+                    <p class="text-lg font-semibold tracking-tight text-[#efefef]">aurix</p>
+                    <p class="text-xs text-[#7d7b7b]">Panel użytkownika</p>
                 </div>
             </div>
+
+            <div class="text-right text-xs text-[#7d7b7b]">
+                <div class="mb-1 text-[#b4b0b0]">{{ app.user.userIdentifier }}</div>
+                <form method="post" action="{{ path('app_logout') }}">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                    <button type="submit" class="underline underline-offset-4 transition hover:text-[#efefef]">Wyloguj</button>
+                </form>
+            </div>
+        </header>
+
+        <div class="rounded-xl border border-[#2a2828] bg-[#121214] p-6 sm:p-8">
+            <div class="flex items-center gap-2.5 text-xs uppercase tracking-wide text-[#4fb3a6]">
+                <span class="h-2 w-2 rounded-full bg-[#4fb3a6]"></span>
+                Profil aktywny
+            </div>
+
+            {% for result in app.flashes('voice_result') %}
+                <div class="mt-4 rounded-md border border-[#1f4d43] bg-[#0f2a25] px-4 py-3">
+                    <p class="text-sm text-[#4fb3a6]">Weryfikacja głosu udana</p>
+                    <p class="mt-1 text-xs text-[#7d7b7b]">
+                        similarity {{ result.similarity|number_format(3) }}
+                        · fraza {{ result.phraseMatch|number_format(2) }}
+                        · PAD {{ result.padScore|number_format(3) }} (diagnostycznie)
+                    </p>
+                </div>
+            {% endfor %}
+
+            <h1 class="mt-3 text-2xl font-bold leading-tight text-[#efefef]">
+                Witaj, {{ app.user.userIdentifier }}.
+            </h1>
+            <p class="mt-2 text-sm leading-6 text-[#7d7b7b]">
+                Twój głos jest zapisany jako trzy zaszyfrowane próbki referencyjne.
+                Przy każdym logowaniu wystarczy powiedzieć jedną z nich.
+            </p>
+
+            <div class="mt-6 divide-y divide-[#2a2828] border-t border-[#2a2828]">
+                {% for sample in samples %}
+                    <div class="flex items-center gap-4 py-4">
+                        <span class="text-xs text-[#7d7b7b]">0{{ sample.phraseIndex }}</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm text-[#efefef]">{{ sample.phrase }}</p>
+                            <p class="mt-0.5 text-xs text-[#7d7b7b]">zapisano {{ sample.createdAt|date('d.m.Y H:i') }}</p>
+                        </div>
+                        <span class="rounded-full bg-[#123a33] px-2.5 py-1 text-[10px] uppercase tracking-wide text-[#4fb3a6]">gotowa</span>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
+
+        <p class="mt-6 text-center text-xs leading-6 text-[#7d7b7b]">
+            Wylogowanie czyści sesję. Kolejne logowanie wymaga hasła i głosu.
+        </p>
     </div>
 {% endblock %}

@@ -2,9 +2,15 @@
 <html lang="pl">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <title>{% block title %}Aurix{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23efefef%22/><text x=%2250%22 y=%2269%22 font-family=%22monospace%22 font-size=%2254%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23101011%22>A</text></svg>">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23efefef%22/><text x=%2250%22 y=%2269%22 font-family=%22monospace%22 font-size=%2254%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%230b0b0c%22>A</text></svg>">
+        <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
+        <meta name="theme-color" content="#0b0b0c">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
         {% block stylesheets %}
         {% endblock %}
 
@@ -12,7 +18,7 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body class="bg-[#101011]">
+    <body class="min-h-screen bg-[#0b0b0c] font-mono text-[#b4b0b0] antialiased selection:bg-[#4fb3a6] selection:text-[#0b0b0c]">
         {% block body %}{% endblock %}
     </body>
 </html>

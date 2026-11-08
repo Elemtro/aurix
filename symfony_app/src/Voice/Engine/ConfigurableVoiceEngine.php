@@ -7,12 +7,6 @@ namespace App\Voice\Engine;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/**
- * Selects the engine through the VOICE_ENGINE environment variable.
- *
- *   VOICE_ENGINE=stub  -> deterministic placeholder, no Python needed
- *   VOICE_ENGINE=http  -> internal Python service (Whisper + models)
- */
 #[AsAlias(VoiceEngineInterface::class)]
 final class ConfigurableVoiceEngine implements VoiceEngineInterface
 {
@@ -24,10 +18,20 @@ final class ConfigurableVoiceEngine implements VoiceEngineInterface
     ) {
     }
 
-    public function verify(string $audioPath, string $expectedPhrase): VerifyResult
+    public function verify(
+        string $audioPath,
+        string $expectedPhrase,
+        ?string $referenceAudioPath = null,
+    ): VerifyResult {
+        return 'http' === $this->engine
+            ? $this->http->verify($audioPath, $expectedPhrase, $referenceAudioPath)
+            : $this->stub->verify($audioPath, $expectedPhrase, $referenceAudioPath);
+    }
+
+    public function checkPhrase(string $audioPath, string $expectedPhrase): PhraseCheckResult
     {
         return 'http' === $this->engine
-            ? $this->http->verify($audioPath, $expectedPhrase)
-            : $this->stub->verify($audioPath, $expectedPhrase);
+            ? $this->http->checkPhrase($audioPath, $expectedPhrase)
+            : $this->stub->checkPhrase($audioPath, $expectedPhrase);
     }
 }

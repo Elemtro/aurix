@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Weryfikacja głosu — Aurix{% endblock %}
+
+{% block body %}
+    <div class="mx-auto flex min-h-screen w-full max-w-xl flex-col px-4 py-6 sm:py-10">
+        <header class="mb-8 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <svg class="h-9 w-9 text-[#4fb3a6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                    <path d="M3 12h2M7 8.5v7M11 5v14M15 9v6M19 10.5h2" />
+                </svg>
+                <div>
+                    <p class="text-lg font-semibold tracking-tight text-[#efefef]">aurix</p>
+                    <p class="text-xs text-[#7d7b7b]">Krok 2 z 2</p>
+                </div>
+            </div>
+
+            <div class="text-right text-xs text-[#7d7b7b]">
+                <div class="mb-1 text-[#b4b0b0]">{{ app.user.userIdentifier }}</div>
+                <form method="post" action="{{ path('app_logout') }}">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                    <button type="submit" class="underline underline-offset-4 transition hover:text-[#efefef]">Wyloguj</button>
+                </form>
+            </div>
+        </header>
+
+        <div
+            class="flex flex-1 flex-col justify-center"
+            data-controller="voice-login"
+            data-voice-login-verify-url-value="{{ path('api_login_voice') }}"
+            data-voice-login-csrf-token-value="{{ csrf_token('aurix') }}"
+            data-voice-login-home-url-value="{{ path('app_home') }}"
+            data-voice-login-login-url-value="{{ path('app_login') }}"
+        >
+            <div class="rounded-xl border border-[#2a2828] bg-[#121214] p-6 sm:p-8">
+                <h1 class="text-lg font-semibold text-[#efefef]">Potwierdź głosem</h1>
+                <p class="mt-1 text-sm leading-6 text-[#7d7b7b]">
+                    Wypowiedz frazę przypisaną do Twojego konta.
+                </p>
+
+                <p class="mt-6 text-xs uppercase tracking-wide text-[#7d7b7b]">Fraza</p>
+                <p class="mt-2 text-2xl font-bold leading-snug text-[#efefef]">{{ phrase }}</p>
+
+                <div class="mt-6 flex items-center gap-2.5 text-sm text-[#7d7b7b]">
+                    <span data-voice-login-target="dot" class="h-2 w-2 rounded-full bg-neutral-600"></span>
+                    <span data-voice-login-target="status">Gotowy do nagrania</span>
+                </div>
+
+                <button
+                    type="button"
+                    data-action="voice-login#toggle"
+                    data-voice-login-target="button"
+                    class="mt-5 w-full rounded-md bg-[#4fb3a6] px-5 py-3 font-medium text-[#0b0b0c] transition hover:brightness-110 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                    Nagraj i zaloguj
+                </button>
+
+                <p data-voice-login-target="error" class="mt-4 hidden rounded-md border border-red-900/60 bg-red-950/30 px-4 py-3 text-sm leading-6 text-red-300"></p>
+
+                <p class="mt-4 text-xs text-[#7d7b7b]">
+                    Pozostałe próby:
+                    <span data-voice-login-target="attempts" class="text-[#b4b0b0]">{{ maxAttempts - attempts }}</span>
+                    z {{ maxAttempts }}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

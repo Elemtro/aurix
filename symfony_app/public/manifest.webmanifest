@@ -1,0 +1,19 @@
+{
+    "name": "Aurix",
+    "short_name": "Aurix",
+    "description": "Weryfikacja głosu jako drugi składnik uwierzytelniania.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0b0b0c",
+    "theme_color": "#0b0b0c",
+    "icons": [
+        {
+            "src": "/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ]
+}

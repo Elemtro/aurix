@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rejestracja — Aurix{% endblock %}
+
+{% block body %}
+    <div class="flex min-h-screen items-center justify-center px-4 py-8">
+        <div class="w-full max-w-md">
+            <div class="mb-8 flex items-center gap-3">
+                <svg class="h-9 w-9 text-[#4fb3a6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                    <path d="M3 12h2M7 8.5v7M11 5v14M15 9v6M19 10.5h2" />
+                </svg>
+                <div>
+                    <p class="text-lg font-semibold tracking-tight text-[#efefef]">aurix</p>
+                    <p class="text-xs text-[#7d7b7b]">Weryfikacja głosu</p>
+                </div>
+            </div>
+
+            <div class="rounded-xl border border-[#2a2828] bg-[#121214] p-6 sm:p-8">
+                <h1 class="text-lg font-semibold text-[#efefef]">Utwórz konto</h1>
+                <p class="mt-1 text-sm leading-6 text-[#7d7b7b]">
+                    Po założeniu konta nagrasz trzy krótkie frazy. Będą one Twoim profilem głosu.
+                </p>
+
+                {{ form_start(form, { attr: { class: 'mt-6 space-y-4' } }) }}
+                    <div>
+                        {{ form_label(form.username) }}
+                        {{ form_widget(form.username) }}
+                        {{ form_errors(form.username, { attr: { class: 'mt-1 text-xs text-red-400' } }) }}
+                    </div>
+
+                    <div>
+                        {{ form_label(form.plainPassword.first) }}
+                        {{ form_widget(form.plainPassword.first) }}
+                        {{ form_errors(form.plainPassword.first, { attr: { class: 'mt-1 text-xs text-red-400' } }) }}
+                    </div>
+
+                    <div>
+                        {{ form_label(form.plainPassword.second) }}
+                        {{ form_widget(form.plainPassword.second) }}
+                        {{ form_errors(form.plainPassword.second, { attr: { class: 'mt-1 text-xs text-red-400' } }) }}
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        {{ form_widget(form.agreeTerms) }}
+                        <div>
+                            {{ form_label(form.agreeTerms) }}
+                            {{ form_errors(form.agreeTerms, { attr: { class: 'mt-1 text-xs text-red-400' } }) }}
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full rounded-md bg-[#4fb3a6] px-5 py-3 font-medium text-[#0b0b0c] transition hover:brightness-110 active:translate-y-px"
+                    >
+                        Utwórz konto i nagraj frazy
+                    </button>
+                {{ form_end(form) }}
+
+                <p class="mt-6 text-center text-sm text-[#7d7b7b]">
+                    Masz już konto?
+                    <a href="{{ path('app_login') }}" class="text-[#efefef] underline underline-offset-4">Zaloguj się</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

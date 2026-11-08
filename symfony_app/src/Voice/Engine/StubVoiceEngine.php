@@ -5,36 +5,49 @@ declare(strict_types=1);
 namespace App\Voice\Engine;
 
 /**
- * Deterministic placeholder engine used until the Python service is ready.
- *
- * Scores are derived from the audio size so repeated runs with the same
- * recording are stable. This keeps the whole flow testable end to end.
+ * Deterministic placeholder used when VOICE_ENGINE=stub.
  */
 final class StubVoiceEngine implements VoiceEngineInterface
 {
-    private const SIMILARITY_THRESHOLD = 0.80;
-    private const PAD_THRESHOLD = 0.90;
-    private const PHRASE_THRESHOLD = 0.80;
-
-    public function verify(string $audioPath, string $expectedPhrase): VerifyResult
-    {
+    public function verify(
+        string $audioPath,
+        string $expectedPhrase,
+        ?string $referenceAudioPath = null,
+    ): VerifyResult {
         $size = max(1, (int) filesize($audioPath));
 
-        $similarity = 0.70 + (($size % 25) / 100);
+        $similarity = 0.92;
         $padScore = 0.99;
         $phraseMatch = 0.95;
 
-        $accepted = $similarity >= self::SIMILARITY_THRESHOLD
-            && $padScore >= self::PAD_THRESHOLD
-            && $phraseMatch >= self::PHRASE_THRESHOLD;
+        if (null === $referenceAudioPath) {
+            return new VerifyResult(
+                accepted: false,
+                similarity: 0.0,
+                padScore: $padScore,
+                phraseMatch: $phraseMatch,
+                reason: 'speaker reference required',
+                stub: true,
+            );
+        }
 
         return new VerifyResult(
-            accepted: $accepted,
+            accepted: $similarity >= 0.80 && $phraseMatch >= 0.80,
             similarity: $similarity,
             padScore: $padScore,
             phraseMatch: $phraseMatch,
-            reason: $accepted ? null : 'similarity below threshold',
+            reason: null,
             stub: true,
+        );
+    }
+
+    public function checkPhrase(string $audioPath, string $expectedPhrase): PhraseCheckResult
+    {
+        return new PhraseCheckResult(
+            accepted: true,
+            phraseMatch: 0.95,
+            transcript: $expectedPhrase,
+            quality: ['speech_duration' => 2.0, 'estimated_snr_db' => 35.0],
         );
     }
 }

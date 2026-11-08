@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Zaloguj się — Aurix{% endblock %}
+
+{% block body %}
+    <div class="flex min-h-screen items-center justify-center px-4 py-8">
+        <div class="w-full max-w-md">
+            <div class="mb-8 flex items-center gap-3">
+                <svg class="h-9 w-9 text-[#4fb3a6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                    <path d="M3 12h2M7 8.5v7M11 5v14M15 9v6M19 10.5h2" />
+                </svg>
+                <div>
+                    <p class="text-lg font-semibold tracking-tight text-[#efefef]">aurix</p>
+                    <p class="text-xs text-[#7d7b7b]">Weryfikacja głosu</p>
+                </div>
+            </div>
+
+            <div class="rounded-xl border border-[#2a2828] bg-[#121214] p-6 sm:p-8">
+                <h1 class="text-lg font-semibold text-[#efefef]">Zaloguj się</h1>
+                <p class="mt-1 text-sm leading-6 text-[#7d7b7b]">
+                    Login i hasło, a następnie jedna z Twoich fraz.
+                </p>
+
+                {% if error %}
+                    <div class="mt-4 rounded-md border border-red-900/60 bg-red-950/30 px-4 py-3 text-sm text-red-300">
+                        Nieprawidłowy login lub hasło.
+                    </div>
+                {% endif %}
+
+                <form method="post" class="mt-6 space-y-4">
+                    <div>
+                        <label for="username" class="mb-1.5 block text-xs uppercase tracking-wide text-[#7d7b7b]">Login</label>
+                        <input
+                            type="text"
+                            value="{{ last_username }}"
+                            name="_username"
+                            id="username"
+                            required
+                            autofocus
+                            autocomplete="username"
+                            class="w-full rounded-md border border-[#2a2828] bg-[#0b0b0c] px-4 py-3 text-[#efefef] outline-none transition focus:border-[#4fb3a6]"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="password" class="mb-1.5 block text-xs uppercase tracking-wide text-[#7d7b7b]">Hasło</label>
+                        <input
+                            type="password"
+                            name="_password"
+                            id="password"
+                            required
+                            autocomplete="current-password"
+                            class="w-full rounded-md border border-[#2a2828] bg-[#0b0b0c] px-4 py-3 text-[#efefef] outline-none transition focus:border-[#4fb3a6]"
+                        >
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <button
+                        type="submit"
+                        class="w-full rounded-md bg-[#4fb3a6] px-5 py-3 font-medium text-[#0b0b0c] transition hover:brightness-110 active:translate-y-px"
+                    >
+                        Dalej
+                    </button>
+                </form>
+
+                <p class="mt-6 text-center text-sm text-[#7d7b7b]">
+                    Nie masz konta?
+                    <a href="{{ path('app_register') }}" class="text-[#efefef] underline underline-offset-4">Zarejestruj się</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
