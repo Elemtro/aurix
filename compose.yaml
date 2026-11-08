@@ -59,8 +59,12 @@ services:
     environment:
       WHISPER_MODEL: "${WHISPER_MODEL:-small}"
       WHISPER_LANGUAGE: "${WHISPER_LANGUAGE:-pl}"
-      WHISPER_CACHE: /models
+      WHISPER_CACHE: /models/whisper
+      MODEL_CACHE: /models
+      TORCH_HOME: /models/torch
       INTERNAL_TOKEN: "${VOICE_ML_TOKEN:-dev-token}"
+      PAD_THRESHOLD: "0.90"
+      PAD_ENFORCED: "${PAD_ENFORCED:-false}"
     volumes:
       - ml_models:/models
       - ../aurix-ml/app:/app/app
