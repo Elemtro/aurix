@@ -101,6 +101,8 @@ docker compose restart web
 
 Otwórz `http://localhost:8000`.
 
+phpMyAdmin (tylko dev): `http://localhost:8081` — login `aurix` / `aurix`.
+
 > Pierwsze nagranie pobiera modele (Whisper, Silero VAD, ECAPA, AASIST) do wolumenu `ml_models`.
 > Kolejne są szybkie. PAD jest diagnostyczny (`PAD_ENFORCED=false`).
 
@@ -118,6 +120,7 @@ W `.env`:
 ```dotenv
 NGINX_HOST_PORT=8000
 DB_HOST_PORT=3307
+PMA_HOST_PORT=8081
 ```
 
 ### Demo bez ML

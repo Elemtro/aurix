@@ -6,3 +6,18 @@ services:
   db:
     ports:
       - "${DB_HOST_PORT:-3307}:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2
+    container_name: aurix-phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "${PMA_HOST_PORT:-8081}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - aurix-net
