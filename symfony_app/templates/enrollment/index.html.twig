@@ -36,8 +36,10 @@
         >
             <div class="mb-6">
                 <div class="flex items-center justify-between text-xs text-[#7d7b7b]">
-                    <span>Krok <span data-enrollment-target="stepNumber">1</span> z 3</span>
-                    <span data-enrollment-target="stepLabel">Fraza referencyjna</span>
+                    <span>Krok <span data-enrollment-target="stepNumber">{{ nextIndex }}</span> z 3</span>
+                    <span data-enrollment-target="stepLabel">
+                        {{ nextIndex == 1 ? 'Fraza referencyjna' : (nextIndex == 2 ? 'Druga fraza' : 'Trzecia fraza') }}
+                    </span>
                 </div>
                 <div class="mt-3 grid grid-cols-3 gap-2">
                     <div data-enrollment-target="progress" class="h-1 rounded-full bg-[#2a2828] transition"></div>
@@ -48,7 +50,7 @@
 
             <div class="rounded-xl border border-[#2a2828] bg-[#121214] p-6 sm:p-8">
                 <p class="text-xs uppercase tracking-wide text-[#7d7b7b]">Wypowiedz frazę</p>
-                <p data-enrollment-target="phrase" class="mt-2 text-2xl font-bold leading-snug text-[#efefef]">—</p>
+                <p data-enrollment-target="phrase" class="mt-2 text-2xl font-bold leading-snug text-[#efefef]">{{ phrases[nextIndex] }}</p>
 
                 <div class="mt-6 flex items-center gap-2.5 text-sm text-[#7d7b7b]">
                     <span data-enrollment-target="dot" class="h-2 w-2 rounded-full bg-neutral-600"></span>

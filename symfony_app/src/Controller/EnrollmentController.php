@@ -151,6 +151,7 @@ final class EnrollmentController extends AbstractController
             'phraseIndex' => $index,
             'phraseMatch' => $check->phraseMatch,
             'nextIndex' => $nextIndex,
+            'nextPhrase' => null === $nextIndex ? null : EnrollmentPhrases::PHRASES[$nextIndex],
             'completed' => $completed,
         ]);
     }

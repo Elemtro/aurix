@@ -39,7 +39,10 @@ export default class extends Controller {
             return;
         }
 
-        this.phraseTarget.textContent = this.phrase;
+        if (this.phrase) {
+            this.phraseTarget.textContent = this.phrase;
+        }
+
         this.stepNumberTarget.textContent = String(this.currentIndex);
         this.stepLabelTarget.textContent = ['Fraza referencyjna', 'Druga fraza', 'Trzecia fraza'][this.currentIndex - 1] || 'Fraza';
 
@@ -136,6 +139,10 @@ export default class extends Controller {
 
             this.currentIndex = data.nextIndex || (this.currentIndex + 1);
             this.render();
+
+            if (data.nextPhrase) {
+                this.phraseTarget.textContent = data.nextPhrase;
+            }
         } catch (error) {
             this.showError('Błąd połączenia. Spróbuj ponownie.');
             this.statusTarget.textContent = 'Błąd';
